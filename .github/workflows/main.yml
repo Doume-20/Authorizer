@@ -22,7 +22,12 @@ jobs:
         java-version: '17'
 
     - name: Install NDK
-      run: echo "y" | sudo ${ANDROID_HOME}/tools/bin/sdkmanager --install "ndk;21.3.6528147" --sdk_root=${ANDROID_SDK_ROOT}
+      run: |
+        SDKMANAGER="${ANDROID_HOME}/cmdline-tools/latest/bin/sdkmanager"
+          if [ ! -x "$SDKMANAGER" ]; then
+            SDKMANAGER="$(find "${ANDROID_HOME}/cmdline-tools" -name sdkmanager -type f 2>/dev/null | head -n 1)"
+          fi
+        yes | sudo "$SDKMANAGER" --install "ndk;21.3.6528147" --sdk_root="${ANDROID_SDK_ROOT}"
 
     - name: Make Gradle executable
       run: chmod +x ./gradlew
